@@ -1,17 +1,18 @@
 package app;
 
 import java.awt.Graphics;
-import java.util.Arrays;
 
 
 public class Ball {
 	double[] position = new double[2];
-	double[] v = new double[2];
+	public double[] v = new double[2];
 	double[] u = new double[2];
+	double[] u_strich = new double[2];
 	double[][] u_comp = new double[2][2];
 	int d;
 	int minV;
-	double mass;
+	public double mass;
+	double[] grossV = new double[2];
 	
 	public Ball(double startX, double startY, double _vX, double _vY, int _diameter, double _mass) {
 		this.position[0] = startX;
@@ -20,20 +21,25 @@ public class Ball {
 		this.v[1] = _vY;
 		this.mass = _mass;
 		this.d = _diameter;
+		this.minV = 0;
 	}
 	
 	public void draw(double _time, Graphics g, int width, int height, double damp, Ball[] baelle) {
-		this.minV = 0;
 		this.update(_time, width, height, damp, baelle);
 		g.fillOval((int)this.position[0], (int)this.position[1], (int)this.d, (int)this.d);
 	}
 	
 	public void update(double _time, int width, int height, double damp, Ball[] baelle) {
-		this.checkForBox(width, height, damp);
-		this.checkForBall(baelle, damp);
 		for (int i = 0; i < 2; i++) {
 			this.position[i] += this.v[i] / _0_Constants.FPS;
 		}
+		this.checkForBox(width, height, damp);
+		this.checkForBall(baelle, damp);
+	}
+	
+	public void calcCollisions(int width, int height, double damp, Ball[] baelle, double[] grossV) {
+		this.grossV = grossV;
+		this.calcCM(baelle);
 	}
 	
 	public void checkForBox(int width, int height, double damp) {
@@ -71,15 +77,13 @@ public class Ball {
 				continue;
 			} else {
 				if (distance(this.position[0]+this.d/2, this.position[1]+this.d/2, ball.position[0]+ball.d/2, ball.position[1]+ball.d/2) < this.d/2+ball.d/2) {
-					this.splitU(baelle);
+					this.splitU(baelle, damp);
+					ball.splitU(baelle, damp);
+					for(int i = 0; i < 2; i++) {
+						this.v[i] = this.u_strich[i] + this.grossV[i];
+						ball.v[i] = ball.u_strich[i] + this.grossV[i];
+					}
 					
-					double num = this.v[0]*(this.mass - ball.mass) + 2 * ball.mass * ball.v[0];
-					double den = this.mass + ball.mass;
-					double newvel = num/den;
-					
-					num = ball.v[0] * (ball.mass - this.mass) + 2 * this.mass * this.v[0];
-					ball.v[0] = (num/den)*damp;
-					this.v[0] = newvel*damp;
 				}
 			}
 		}
@@ -105,26 +109,29 @@ public class Ball {
 		}
 	}
 	
-	public void splitU(Ball[] baelle) {
-		this.calcCM(baelle);
+	public void splitU(Ball[] baelle, double damp) {
 		for(Ball ball :  baelle) {
 			if(this == ball) {
 				continue;
 			} else {
+				this.calcCM(baelle);
+				ball.calcCM(baelle);
 				double[] b = {ball.position[0] - this.position[0], ball.position[1] - this.position[1]};
-				System.out.println(b[1]);
+				double con = (this.u[0] * b[0] + this.u[1] * b[1]) / (b[0] * b[0] + b[1] * b[1]);
 				for(int i = 0; i < 2; i++) {
-					this.u_comp[0][i] = (this.u[i] - b[i])/(b[i] * b[i]) * b[i];
+					this.u_comp[0][i] = con * b[i];
 				}
 				for(int i = 0; i < 2; i++) {
 					this.u_comp[1][i] = this.u[i] - this.u_comp[0][i];
 				}
+				for(int i = 0; i < 2; i++) {
+					this.u_comp[0][i] *= -1;
+				}
+				for(int i = 0; i < 2; i++) {
+					this.u_strich[i] = this.u_comp[0][i] + this.u_comp[1][i];
+				}
 			}
 		}
-		
-		System.out.println(Arrays.toString(this.u));
-		double[] test = {this.u_comp[0][0] + this.u_comp[1][0], this.u_comp[0][1] + this.u_comp[1][1]};
-		System.out.println(Arrays.toString(test));
 	}
 }
 
