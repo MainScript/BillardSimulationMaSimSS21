@@ -116,7 +116,7 @@ public class Ball {
 			} else {
 				this.calcCM(baelle);
 				ball.calcCM(baelle);
-				double[] b = {ball.position[0] - this.position[0], ball.position[1] - this.position[1]};
+				double[] b = {ball.position[0]+ball.d/2 - this.position[0]+this.d/2, ball.position[1]+ball.d/2 - this.position[1]+this.d/2};
 				double con = (this.u[0] * b[0] + this.u[1] * b[1]) / (b[0] * b[0] + b[1] * b[1]);
 				for(int i = 0; i < 2; i++) {
 					this.u_comp[0][i] = con * b[i];
@@ -125,7 +125,7 @@ public class Ball {
 					this.u_comp[1][i] = this.u[i] - this.u_comp[0][i];
 				}
 				for(int i = 0; i < 2; i++) {
-					this.u_comp[0][i] *= -1;
+					this.u_comp[0][i] *= -damp;
 				}
 				for(int i = 0; i < 2; i++) {
 					this.u_strich[i] = this.u_comp[0][i] + this.u_comp[1][i];
@@ -134,5 +134,4 @@ public class Ball {
 		}
 	}
 }
-
 
