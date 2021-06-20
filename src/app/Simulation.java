@@ -9,8 +9,10 @@ import utils.FrameUpdate;
 import java.util.Timer;
 
 import java.awt.Graphics;
+import java.text.DecimalFormat;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 
 public class Simulation {
 	
@@ -60,7 +62,7 @@ class YourGraphicsContent extends JPanel {
 		return new Dimension(_0_Constants.WINDOW_WIDTH, _0_Constants.WINDOW_HEIGHT);
 	}
 	
-	int startX = 20;
+	int startX = 0;
 	int startY = 100;
 	int vX = 100;
 	int vY = 0;
@@ -69,7 +71,7 @@ class YourGraphicsContent extends JPanel {
 	double mass = 1;
 	
 	private Ball b1 = new Ball(startX, startY, vX, vY, diameter, mass);
-	private Ball b2 = new Ball(300, 100, -100, 0, diameter, 2*mass);
+	private Ball b2 = new Ball(300, 400, 0, -100, diameter, mass);
 	private Ball[] baelle = {b1, b2};
 	
 	
@@ -82,7 +84,6 @@ class YourGraphicsContent extends JPanel {
 		g.setColor(Color.LIGHT_GRAY);
 		g.fillRect(0, 0, _0_Constants.WINDOW_WIDTH, _0_Constants.WINDOW_HEIGHT);
 		double[] grossV = {(b1.mass * b1.v[0] + b2.mass * b2.v[0]) / (b1.mass + b2.mass), (b1.mass * b1.v[1] + b2.mass * b2.v[1]) / (b1.mass + b2.mass)};
-		System.out.println(grossV[0] + ", " + grossV[1]);
 		//System.out.println(Arrays.toString(grossV));
 		b1.calcCollisions(_0_Constants.WINDOW_WIDTH, _0_Constants.WINDOW_HEIGHT, damp, baelle, grossV);
 		b2.calcCollisions(_0_Constants.WINDOW_WIDTH, _0_Constants.WINDOW_HEIGHT, damp, baelle, grossV);
@@ -90,5 +91,15 @@ class YourGraphicsContent extends JPanel {
 		b1.draw(time, g, _0_Constants.WINDOW_WIDTH, _0_Constants.WINDOW_HEIGHT, damp, baelle);
 		g.setColor(Color.GREEN);
 		b2.draw(time, g, _0_Constants.WINDOW_WIDTH, _0_Constants.WINDOW_HEIGHT, damp, baelle);
+		g.setFont(new Font("Serif", Font.PLAIN, 18));
+        g.setColor(Color.BLACK);
+        String message = "[" + String.format("%.02f", grossV[0]) + " | " + String.format("%.02f", grossV[1]) + "]";
+        g.drawString(message, _0_Constants.WINDOW_WIDTH / 2 -50,20);
+        g.setColor(Color.RED);
+        message = "[" + String.format("%.02f", b1.v[0]) + " | " + String.format("%.02f", b1.v[1]) + "]";
+        g.drawString(message, 0,20);
+        g.setColor(Color.GREEN);
+        message = "[" + String.format("%.02f", b2.v[0]) + " | " + String.format("%.02f", b2.v[1]) + "]";
+        g.drawString(message, _0_Constants.WINDOW_WIDTH - 130,20);
 	}
 }
