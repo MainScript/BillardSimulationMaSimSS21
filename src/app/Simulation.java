@@ -61,15 +61,15 @@ class YourGraphicsContent extends JPanel {
 	}
 	
 	int startX = 20;
-	int startY = 30;
-	int vX = 50;
+	int startY = 100;
+	int vX = 100;
 	int vY = 0;
-	int diameter = 50;
+	int diameter = 100;
 	double damp = 1;
 	double mass = 1;
 	
 	private Ball b1 = new Ball(startX, startY, vX, vY, diameter, mass);
-	private Ball b2 = new Ball(300, 30, -50, 0, 2*diameter, mass);
+	private Ball b2 = new Ball(300, 100, -100, 0, diameter, 2*mass);
 	private Ball[] baelle = {b1, b2};
 	
 	
@@ -82,6 +82,7 @@ class YourGraphicsContent extends JPanel {
 		g.setColor(Color.LIGHT_GRAY);
 		g.fillRect(0, 0, _0_Constants.WINDOW_WIDTH, _0_Constants.WINDOW_HEIGHT);
 		double[] grossV = {(b1.mass * b1.v[0] + b2.mass * b2.v[0]) / (b1.mass + b2.mass), (b1.mass * b1.v[1] + b2.mass * b2.v[1]) / (b1.mass + b2.mass)};
+		System.out.println(grossV[0] + ", " + grossV[1]);
 		//System.out.println(Arrays.toString(grossV));
 		b1.calcCollisions(_0_Constants.WINDOW_WIDTH, _0_Constants.WINDOW_HEIGHT, damp, baelle, grossV);
 		b2.calcCollisions(_0_Constants.WINDOW_WIDTH, _0_Constants.WINDOW_HEIGHT, damp, baelle, grossV);
