@@ -9,7 +9,6 @@ import utils.FrameUpdate;
 import java.util.Timer;
 
 import java.awt.Graphics;
-import java.text.DecimalFormat;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
